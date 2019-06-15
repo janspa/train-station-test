@@ -4,16 +4,13 @@
       Odota hetki...
     </div>
     <div v-else>
-        <!--<md-autocomplete
-          v-model="selectedStationName"
-          :md-options="stationNames"
-          @md-selected="handleStationSelect">
-          <label>Hae aseman nimellä</label>
-        </md-autocomplete>-->
-      <InputField
-        v-on:change="handleStationSelect">
+      <AutoComplete
+        v-model="selectedStationName"
+        @selected="onStationSelect"
+        :suggestions="stationNames"
+        >
         <label>Hae aseman nimellä</label>
-      </InputField>
+      </AutoComplete>
       <Tabs style="margin-top:2rem">
         <Tab label="Saapuvat">
           <LiveTrainTable :trains="trains" :stations="stations" :selectedStation="selectedStation" timeTableType="ARRIVAL" />
@@ -27,7 +24,7 @@
 </template>
 
 <script>
-import InputField from './ui/InputField.vue'
+import AutoComplete from './ui/AutoComplete.vue'
 import Tabs from './ui/Tabs.vue'
 import Tab from './ui/Tab.vue'
 import LiveTrainTable from './LiveTrainTable.vue'
@@ -47,16 +44,24 @@ export default {
   components: {
     Tabs,
     Tab,
-    InputField,
+    AutoComplete,
     LiveTrainTable,
   },
 
   data: () => ({
     loading: true,
     selectedStation: null,
+    selectedStationName: '',
     stations: [],
     trains: [],
   }),
+
+  watch: {
+    selectedStationName () {
+      console.log(this.selectedStationName)
+      this.onStationSelect(this.selectedStationName)
+    },
+  },
 
   computed: {
     passengerStations: function() {
@@ -106,12 +111,13 @@ export default {
     getStationByCode(code) {
       return this.stations.find(s => s.stationShortCode.toLowerCase() === code.toLowerCase())
     },
-    handleStationSelect(name) {
-      this.selectedStation = null
+    onStationSelect(name) {
       const station = this.getStationByName(name)
       if (station) {
         this.selectedStation = station
         this.fetchLiveTrains(station.stationShortCode)
+      } else {
+        this.selectedStation = null
       }
     },
   },

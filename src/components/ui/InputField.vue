@@ -4,10 +4,13 @@
     <div class="input-wrapper">
       <input
         v-bind="$attrs"
+        ref="input"
         v-model="inputValue"
         :value="value"
-        @input="$emit('input', $event.target.value)"
-        @change="$emit('change', $event.target.value)"
+        @input="$emit('input', inputValue)"
+        @change="$emit('change', inputValue)"
+        @focus="onFocus($event)"
+        @blur="onBlur($event)"
       >
       <button
         class="clear-button"
@@ -30,12 +33,23 @@ export default {
 
   data: () => ({
     inputValue: '',
+    focused: false,
   }),
 
   methods: {
     clearInput: function() {
       this.inputValue = ''
-    }
+      this.$emit('input', this.inputValue)
+      this.$emit('change', this.inputValue)
+    },
+    onFocus: function(event) {
+      this.focused = true
+      this.$emit('focus', event)
+    },
+    onBlur: function(event) {
+      this.focused = false
+      this.$emit('blur', event)
+    },
   }
 }
 </script>

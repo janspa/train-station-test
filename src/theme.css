@@ -82,3 +82,11 @@ tbody tr:nth-child(odd) {
 small, .small {
   font-size: 0.8em;
 }
+
+.raised-1 {
+  box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
+}
+
+.raised-2 {
+  box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.4);
+}

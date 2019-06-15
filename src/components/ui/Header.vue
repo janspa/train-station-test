@@ -1,5 +1,5 @@
 <template>
-  <div class="header bg-primary">
+  <div class="header bg-primary raised-1">
     <slot></slot>
   </div>
 </template>
@@ -14,6 +14,5 @@
   .header {
     font-size: 1.25em;
     padding: 1rem 3rem;
-    box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.5);
   }
 </style>

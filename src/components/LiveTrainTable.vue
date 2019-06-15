@@ -12,12 +12,12 @@
       <tr
         v-for="(row, i) in timeTableRows"
         :key="i"
-        :class="{ 'cancelled': row.train.cancelled }">
+        :class="{ 'text-muted': row.train.cancelled }">
         <td>{{ row.train.trainType }} {{ row.train.trainNumber }}</td>
         <td>{{ getFirstStation(row.train) }}</td>
         <td>{{ getFinalStation(row.train) }}</td>
         <td v-if="isCancelled(row.train)"><div>{{ getScheduledTime(row) }}</div><div class="text-danger">Cancelled</div></td>
-        <td v-if="isLate(row)"><div class="text-danger">{{ getEstimateTime(row) }}</div><div class="small">({{ getScheduledTime(row) }})</div></td>
+        <td v-else-if="isLate(row)"><div class="text-danger">{{ getEstimateTime(row) }}</div><div class="small">({{ getScheduledTime(row) }})</div></td>
         <td v-else>{{ getEstimateTime(row) }}</td>
       </tr>
     </tbody>
