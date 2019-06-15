@@ -4,21 +4,33 @@
       Odota hetki...
     </div>
     <div v-else>
-      <md-autocomplete
-        v-model="selectedStation"
-        :md-options="stationNames"
-        @md-selected="handleStationSelect">
+        <!--<md-autocomplete
+          v-model="selectedStationName"
+          :md-options="stationNames"
+          @md-selected="handleStationSelect">
+          <label>Hae aseman nimellä</label>
+        </md-autocomplete>-->
+      <InputField
+        v-on:change="handleStationSelect">
         <label>Hae aseman nimellä</label>
-      </md-autocomplete>
+      </InputField>
+      <Tabs style="margin-top:2rem">
+        <Tab label="Saapuvat">
+          <LiveTrainTable :trains="trains" :stations="stations" :selectedStation="selectedStation" timeTableType="ARRIVAL" />
+        </Tab>
+        <Tab label="Lähtevät">
+          <LiveTrainTable :trains="trains" :stations="stations" :selectedStation="selectedStation" timeTableType="DEPARTURE" />
+        </Tab>
+      </Tabs>
     </div>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import { MdAutocomplete } from 'vue-material/dist/components'
-
-Vue.use(MdAutocomplete)
+import InputField from './ui/InputField.vue'
+import Tabs from './ui/Tabs.vue'
+import Tab from './ui/Tab.vue'
+import LiveTrainTable from './LiveTrainTable.vue'
 
 const API_URL = "https://rata.digitraffic.fi/api/v1/"
 const apiLiveTrainOpts = {
@@ -31,34 +43,46 @@ const apiLiveTrainOpts = {
 
 export default {
   name: 'LiveTrainInfo',
+
+  components: {
+    Tabs,
+    Tab,
+    InputField,
+    LiveTrainTable,
+  },
+
   data: () => ({
     loading: true,
-    selectedStation: '',
+    selectedStation: null,
     stations: [],
-    trainsArriving: [],
-    trainsDeparting: [],
+    trains: [],
   }),
+
   computed: {
+    passengerStations: function() {
+      return this.stations.filter(station => station.passengerTraffic)
+    },
     stationNames: function () {
-      return this.stations.map(s => s.stationName)
+      return this.passengerStations.map(s => s.stationName)
     },
   },
+
   created: async function() {
     this.loading = true
     this.stations = await this.fetchStations()
     this.loading = false
   },
+
   methods: {
     fetchStations() {
       const url = new URL(`metadata/stations`, API_URL)
       return fetch(url)
         .then(res => res.json())
         .then(data => data
-          .filter(stations => stations.passengerTraffic)
           .map(station => {
             // remove the extraneous ' asema' suffix
             if (/ asema$/.test(station.stationName)) {
-              station.stationName = station.stationName.slice(0, 7)
+              station.stationName = station.stationName.slice(0, -6)
             }
             // convert underscores to spaces
             station.stationName = station.stationName.replace(/_/g, ' ')
@@ -73,19 +97,20 @@ export default {
       return fetch(url)
       .then(res => res.json())
       .then(data => {
-        console.log(data)
+        this.trains = data
       })
     },
     getStationByName(name) {
-      return this.stations.find(s => s.stationName === name)
+      return this.stations.find(s => s.stationName.toLowerCase() === name.toLowerCase())
     },
     getStationByCode(code) {
-      return this.stations.find(s => s.stationShortCode === code)
+      return this.stations.find(s => s.stationShortCode.toLowerCase() === code.toLowerCase())
     },
-    handleStationSelect() {
-      const station = this.getStationByName(this.selectedStation)
-      console.log(station)
+    handleStationSelect(name) {
+      this.selectedStation = null
+      const station = this.getStationByName(name)
       if (station) {
+        this.selectedStation = station
         this.fetchLiveTrains(station.stationShortCode)
       }
     },

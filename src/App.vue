@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <md-toolbar class="md-primary">
-      <header class="md-title">Aseman junatiedot</header>
-    </md-toolbar>
+    <Header>
+      <span>Aseman junatiedot</span>
+    </Header>
     <div class="content">
       <LiveTrainInfo/>
     </div>
@@ -10,26 +10,21 @@
 </template>
 
 <script>
+import Header from './components/ui/Header.vue'
 import LiveTrainInfo from './components/LiveTrainInfo.vue'
 
 export default {
   name: 'app',
+
   components: {
-    LiveTrainInfo
+    Header,
+    LiveTrainInfo,
   },
 }
 </script>
 
 <style>
-#app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-}
-.md-toolbar {
-  padding: 1rem 3rem;
-}
 .content {
-  padding: 1rem 3rem;
+  padding: 3rem;
 }
 </style>
