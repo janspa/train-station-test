@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="loading">
+    <div v-if="loadingStations">
       Odota hetki...
     </div>
     <div v-else>
@@ -11,12 +11,22 @@
         >
         <label>Hae aseman nimellä</label>
       </AutoComplete>
-      <Tabs style="margin-top:2rem">
+      <Tabs class="tabs">
         <Tab label="Saapuvat">
-          <LiveTrainTable :trains="trains" :stations="stations" :selectedStation="selectedStation" timeTableType="ARRIVAL" />
+          <LiveTrainTable
+            :loading="loadingTrains"
+            :trains="trains"
+            :stations="stations"
+            :selectedStation="selectedStation"
+            timeTableType="ARRIVAL" />
         </Tab>
         <Tab label="Lähtevät">
-          <LiveTrainTable :trains="trains" :stations="stations" :selectedStation="selectedStation" timeTableType="DEPARTURE" />
+          <LiveTrainTable
+            :loading="loadingTrains"
+            :trains="trains"
+            :stations="stations"
+            :selectedStation="selectedStation"
+            timeTableType="DEPARTURE" />
         </Tab>
       </Tabs>
     </div>
@@ -49,7 +59,8 @@ export default {
   },
 
   data: () => ({
-    loading: true,
+    loadingStations: true,
+    loadingTrains: false,
     selectedStation: null,
     selectedStationName: '',
     stations: [],
@@ -72,13 +83,12 @@ export default {
   },
 
   created: async function() {
-    this.loading = true
     this.stations = await this.fetchStations()
-    this.loading = false
   },
 
   methods: {
     fetchStations() {
+      this.loadingStations = true
       const url = new URL(`metadata/stations`, API_URL)
       return fetch(url)
         .then(res => res.json())
@@ -92,8 +102,13 @@ export default {
             station.stationName = station.stationName.replace(/_/g, ' ')
             return station
           }))
+        .then(data => {
+          this.loadingStations = false
+          return data
+        })
     },
     fetchLiveTrains(stationCode) {
+      this.loadingTrains = true
       const url = new URL(`live-trains/station/${stationCode}`, API_URL)
       for (let [key, value] of Object.entries(apiLiveTrainParams)) {
         url.searchParams.append(key, value)
@@ -101,7 +116,8 @@ export default {
       return fetch(url)
       .then(res => res.json())
       .then(data => {
-        this.trains = data
+        this.loadingTrains = false
+        return data
       })
     },
     getStationByName(name) {
@@ -110,11 +126,11 @@ export default {
     getStationByCode(code) {
       return this.stations.find(s => s.stationShortCode.toLowerCase() === code.toLowerCase())
     },
-    onStationSelect(name) {
+    async onStationSelect(name) {
       const station = this.getStationByName(name)
       if (station) {
         this.selectedStation = station
-        this.fetchLiveTrains(station.stationShortCode)
+        this.trains = await this.fetchLiveTrains(station.stationShortCode)
       } else {
         this.selectedStation = null
       }
@@ -122,3 +138,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  .tabs {
+    margin-top: 2rem;
+    max-width: 600px;
+  }
+</style>

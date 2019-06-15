@@ -77,10 +77,10 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
+<style scoped>
 ul.suggestions {
   position: absolute;
-  background: var(--theme-background);
+  background: var(--theme-background, #fff);
   z-index: 9;
   min-width: 19rem;
   max-height: 16rem;

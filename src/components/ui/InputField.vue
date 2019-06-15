@@ -16,7 +16,7 @@
         class="clear-button"
         v-show="inputValue"
         @click="clearInput"
-      >&times;</button>
+      ><span>&times;</span></button>
     </div>
   </div>
 </template>
@@ -55,28 +55,33 @@ export default {
 </script>
 
 <style scoped>
-.input-wrapper {
-  position: relative;
-  display: inline;
-}
-.input-field label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 0.25em;
-}
-.input-field input {
-  width: 20rem;
-}
-.clear-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 2em;
-  z-index: 9;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-}
+  .input-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  .input-field label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.25em;
+  }
+  .input-field input {
+    width: 20rem;
+  }
+  .clear-button {
+    position: absolute;
+    display: flex;
+    top: 0;
+    right: 0;
+    height: 100%;
+    border: 0;
+    padding: 0 0.25em;
+    background: transparent;
+    cursor: pointer;
+    font-size: 2em;
+    align-items: center;
+    color: var(--theme-color-muted, #999);
+  }
+  .clear-button:hover {
+    color: var(--theme-color, #333);
+  }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs">
+  <div class="tabs-wrapper">
     <ul class="nav-tabs">
       <li
         v-for="(tab, i) in tabs"

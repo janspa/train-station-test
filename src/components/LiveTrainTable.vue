@@ -1,5 +1,11 @@
 <template>
-  <table v-if="selectedStation">
+  <div v-if="loading">
+    Ladataan...
+  </div>
+  <div v-else-if="!selectedStation">
+    Valitse asema.
+  </div>
+  <table v-else>
     <thead>
       <tr>
         <td>Juna</td>
@@ -16,15 +22,18 @@
         <td>{{ row.train.trainType }} {{ row.train.trainNumber }}</td>
         <td>{{ getFirstStation(row.train) }}</td>
         <td>{{ getFinalStation(row.train) }}</td>
-        <td v-if="isCancelled(row.train)"><div>{{ getScheduledTime(row) }}</div><div class="text-danger">Cancelled</div></td>
-        <td v-else-if="isLate(row)"><div class="text-danger">{{ getEstimateTime(row) }}</div><div class="small">({{ getScheduledTime(row) }})</div></td>
+        <td v-if="isCancelled(row.train)">
+          <div>{{ getScheduledTime(row) }}</div>
+          <div class="text-danger">Cancelled</div>
+        </td>
+        <td v-else-if="isLate(row)">
+          <div class="text-danger">{{ getEstimateTime(row) }}</div>
+          <div class="small">({{ getScheduledTime(row) }})</div>
+        </td>
         <td v-else>{{ getEstimateTime(row) }}</td>
       </tr>
     </tbody>
   </table>
-  <div v-else>
-    Valitse asema.
-  </div>
 </template>
 
 <script>
@@ -34,6 +43,7 @@
     name: 'LiveTrainTable',
 
     props: {
+      loading: Boolean,
       trains: Array,
       stations: Array,
       selectedStation: Object,
@@ -87,3 +97,12 @@
     }
   }
 </script>
+
+<style scoped>
+  table {
+    width: 100%;
+  }
+  td {
+    min-width: 25%;
+  }
+</style>
