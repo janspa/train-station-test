@@ -29,8 +29,8 @@ import Tabs from './ui/Tabs.vue'
 import Tab from './ui/Tab.vue'
 import LiveTrainTable from './LiveTrainTable.vue'
 
-const API_URL = "https://rata.digitraffic.fi/api/v1/"
-const apiLiveTrainOpts = {
+const API_URL = 'https://rata.digitraffic.fi/api/v1/'
+const apiLiveTrainParams = {
   arrived_trains: 0,
   departed_trains: 0,
   arriving_trains: 10,
@@ -58,7 +58,6 @@ export default {
 
   watch: {
     selectedStationName () {
-      console.log(this.selectedStationName)
       this.onStationSelect(this.selectedStationName)
     },
   },
@@ -96,7 +95,7 @@ export default {
     },
     fetchLiveTrains(stationCode) {
       const url = new URL(`live-trains/station/${stationCode}`, API_URL)
-      for (let [key, value] of Object.entries(apiLiveTrainOpts)) {
+      for (let [key, value] of Object.entries(apiLiveTrainParams)) {
         url.searchParams.append(key, value)
       }
       return fetch(url)

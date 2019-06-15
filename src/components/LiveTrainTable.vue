@@ -12,7 +12,7 @@
       <tr
         v-for="(row, i) in timeTableRows"
         :key="i"
-        :class="{ 'text-muted': row.train.cancelled }">
+        :class="{ 'text-muted': isCancelled(row.train) }">
         <td>{{ row.train.trainType }} {{ row.train.trainNumber }}</td>
         <td>{{ getFirstStation(row.train) }}</td>
         <td>{{ getFinalStation(row.train) }}</td>
@@ -42,10 +42,10 @@
 
     computed: {
       timeTableRows: function() {
-        return this.trains.map(t => {
-          const row = this.getTimeTableRow(t)
+        return this.trains.map(train => {
+          const row = this.getTimeTableRow(train)
           if (row) {
-            row.train = t
+            row.train = train
           }
           return row
         })
@@ -87,9 +87,3 @@
     }
   }
 </script>
-
-<style scoped>
-tr.cancelled {
-  color: var(--theme-muted);
-}
-</style>
