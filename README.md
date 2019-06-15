@@ -1,4 +1,4 @@
-# etteplan-test
+# train-station-test
 
 ## Project setup
 ```
